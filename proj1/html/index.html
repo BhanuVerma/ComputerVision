@@ -1,0 +1,282 @@
+<html>
+<head>
+<title>Computer Vision Project</title>
+<link href='http://fonts.googleapis.com/css?family=Nunito:300|Crimson+Text|Droid+Sans+Mono' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" title="Default" href="styles/github.css">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>  
+
+<link rel="stylesheet" href="highlighting/styles/default.css">
+<script src="highlighting/highlight.pack.js"></script>
+
+<style type="text/css">
+body {
+	margin: 0px;
+	width: 100%;
+	font-family: 'Crimson Text', serif;
+	font-size: 20px;
+	background: #fcfcfc;
+}
+h1 {
+	font-family: 'Nunito', sans-serif;
+	font-weight: normal;
+	font-size: 36px;
+	margin: 25px 0px 0px 0px;
+
+}
+
+h2 {
+	font-family: 'Nunito', sans-serif;
+	font-weight: normal;
+	font-size: 32px;
+	margin: 15px 0px 35px 0px;
+	color: #333;	
+	word-spacing: 3px;
+}
+
+h3 {
+	font-family: 'Nunito', sans-serif;
+	font-weight: normal;
+	font-size: 26px;
+	margin: 10px 0px 10px 0px;
+	color: #333;
+	word-spacing: 2px;
+}
+h4 {
+	font-family: 'Nunito', sans-serif;
+	font-weight: normal;
+	font-size: 22px;
+	margin: 10px 0px 10px 0px;
+	color: #333;
+	word-spacing: 2px;
+}
+
+h5 {
+	font-family: 'Nunito', sans-serif;
+	font-weight: normal;
+	font-size: 18px;
+	margin: 10px 0px 10px 0px;
+	color: #111;
+	word-spacing: 2px;
+}
+
+p, li {
+	color: #444;
+}
+
+a {
+	color: #DE3737;
+}
+
+caption{
+	font-weight: bold;
+	padding-bottom: 5px;
+}
+
+.image_filtering th img{
+    text-align: center;
+    width:330;
+    height:300;
+}
+
+table .image_filtering{
+	padding-left: 20px;
+	align: center;
+}
+.sep {
+	height: 1px;
+	width: 100%;
+	background: #999;
+	margin: 20px 0px 20px 0px;
+}
+.footer{
+	font-size: 16px;
+}
+.latex {
+	width: 100%;
+}
+
+.latex img {
+	display: block;
+	margin: 0px auto 0px auto;
+}
+
+.container {
+	margin: 0px auto 0px auto;
+	width: 960px;
+}
+
+#header {
+	background: #333;
+	width: 100%;
+}
+
+#headersub {
+	color: #ccc;
+	width: 960px;
+	margin: 0px auto 0px auto;
+	padding: 20px 0px 20px 0px;
+}
+
+.chart {
+	width: 480px;
+}
+.lol {
+	font-size: 16px;
+	color: #888;
+	font-style: italic;
+}
+
+pre {
+	font-family: 'Droid Sans Mono';
+	font-size: 14px;
+}
+td{
+	vertical-align: middle;
+	text-align: center;
+}
+td img {
+  vertical-align: middle;
+  width: 100%;
+}
+
+#contents a {
+}
+
+</style>
+<script type="text/javascript">
+    hljs.initHighlightingOnLoad();
+</script>
+</head>
+<body>
+<div id="header" >
+<div id="headersub">
+<h1><span style="color: #DE3737">Bhanu Verma (903151012)</span></h1>
+</div>
+</div>
+<div class="container">
+
+<h2>Project 1: Image Filtering and Hybrid Images</h2>
+
+<p> Let's start with image filtering first. Image filtering is a technique of applying various effects on photos. One can have lot of fun with image filters. For example, one can use an identity filter to replicate the exact same image, sobel filters can be used for detecting horizontal or vertical edges, a low pass filter can be used to remove high frequencies from an image,etc. In this project, we create our own imfilter called my_imfilter, which will be used lated for creating hybrid images. But before that let's look at few examples and see if there are any considerable differences between my_imfilter and imfilter(Matlab function): </p>
+
+<table class = "image_filtering" border=1>
+<caption><b>my_imfilter</b> vs <b>imfilter</b></caption>
+
+<tr>
+    <th>filter_name</th>
+    <th>my_imfilter</th>
+    <th>imfilter</th>
+</tr>
+    
+<tr>
+    <th>Identity</th>
+    <th><img src="src/my_imfilter/identity_image_myfilter.jpg"/></th>
+    <th><img src="src/imfilter/identity_image_imfilter.jpg"/></th>
+</tr>
+
+<tr>
+    <th>Laplacian</th>
+    <th><img src="src/my_imfilter/laplacian_image_myfilter.jpg"/></th>
+    <th><img src="src/imfilter/laplacian_image_imfilter.jpg"/></th>
+</tr>
+
+<tr>
+    <th>Light Blur</th>
+    <th><img src="src/my_imfilter/blur_image_myfilter.jpg"/></th>
+    <th><img src="src/imfilter/blur_image_imfilter.jpg"/></th>
+</tr>
+
+<tr>
+    <th>Large Blur</th>
+    <th><img src="src/my_imfilter/large_blur_image_myfilter.jpg"/></th>
+    <th><img src="src/imfilter/large_blur_image_imfilter.jpg"/></th>
+</tr>
+
+<tr>
+    <th>Sobel</th>
+    <th><img src="src/my_imfilter/sobel_image_myfilter.jpg"/></th>
+    <th><img src="src/imfilter/sobel_image_imfilter.jpg"/></th>
+</tr>
+
+</table>
+
+<h3>my_imfilter implementation</h3>
+
+<p> Following section contains the code for my_imfilter implementation. This code will work for both greyscale and color images as number of dimensions have been handled appropriately. This implementation can handle varying filter sizes as well as no values have been hardcoded. </p>
+
+<pre><code>
+%example code
+filter_length = size(filter,1);                         % get number of rows in filter
+filter_width = size(filter,2);                          % get number of columns in filter
+row_offset = (filter_length-1)/2;                       % get length or row offset
+col_offset = (filter_width-1)/2;                        % get width or column offset
+output = zeros(size(image));                            % initialize the output image with zeroes
+image = im2double(image);                               % increase precision
+padsize = [(filter_length-1)/2 (filter_width-1)/2];
+padded_image = padarray(image, padsize, 'symmetric');   % 'both' is set by default
+image_length = size(padded_image,1);                    % get image length
+image_width = size(padded_image,2);                     % get image width
+
+for image_dim=1:size(padded_image,3)
+    for row=(filter_length+1)/2:image_length-row_offset
+        for col=(filter_width+1)/2:image_width-col_offset
+            dot_product = sum(filter.*padded_image(row-row_offset:row+row_offset, 
+            col-col_offset:col+col_offset, image_dim));
+            output(row-row_offset,col-col_offset,image_dim)=sum(dot_product);
+        end
+    end
+end
+
+</code></pre>
+
+<h3>Hybrid Images</h3>
+
+Please note that we had to choose a suitable frequency for each pair of images after experimentation.
+
+<table class = "hybrid_1" border=1>
+
+<tr>
+    <th>Cut-Off Frequency</th>
+    <th>High frequency</th>
+    <th>Low frequency</th>
+    <th>Hybrid Masterpiece</th>
+</tr>
+
+<tr>
+    <td>7</td>
+    <td><img src="src/hybrid/pair1/high_frequencies.jpg"/></td>
+    <td><img src="src/hybrid/pair1/low_frequencies.jpg"/></td>
+    <td><img src="src/hybrid/pair1/hybrid_image_scales.jpg"/></td>
+</tr>
+
+<tr>
+    <td>4</td>
+    <td><img src="src/hybrid/pair2/high_frequencies.jpg"/></td>
+    <td><img src="src/hybrid/pair2/low_frequencies.jpg"/></td>
+    <td><img src="src/hybrid/pair2/hybrid_image_scales.jpg"/></td>
+</tr>
+
+<tr>
+    <td>3</td>
+    <td><img src="src/hybrid/pair3/high_frequencies.jpg"/></td>
+    <td><img src="src/hybrid/pair3/low_frequencies.jpg"/></td>
+    <td><img src="src/hybrid/pair3/hybrid_image_scales.jpg"/></td>
+</tr>
+    
+<tr>
+    <td>3</td>
+    <td><img src="src/hybrid/pair4/high_frequencies.jpg"/></td>
+    <td><img src="src/hybrid/pair4/low_frequencies.jpg"/></td>
+    <td><img src="src/hybrid/pair4/hybrid_image_scales.jpg"/></td>
+</tr>
+
+<tr>
+    <td>8</td>
+    <td><img src="src/hybrid/pair5/high_frequencies.jpg"/></td>
+    <td><img src="src/hybrid/pair5/low_frequencies.jpg"/></td>
+    <td><img src="src/hybrid/pair5/hybrid_image_scales.jpg"/></td>
+</tr>
+
+</table>
+</body>
+</html>

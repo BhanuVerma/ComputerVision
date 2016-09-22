@@ -62,7 +62,7 @@ I_xy=imfilter(Ixy, gaussian_filter);
 % lambda0 * lambda1 - alpha(lambda0 + lamda1)^2
 
 alpha = 0.05;       % value proposed by Harris and Stephens (1988)
-threshold_val = 0.0008;
+threshold_val = 0.0005;
 harris_detector = (I_xx.*I_yy - I_xy.^2) - alpha*((I_xx+I_yy).^2);
 normalized_detector = harris_detector/max(max(harris_detector));
 normalized_detector(normalized_detector<threshold_val)=0;

@@ -22,21 +22,27 @@ function [matches, confidences] = match_features(features1, features2)
 % section 4.1.3 of Szeliski. For extra credit you can implement various
 % forms of spatial verification of matches.
 
-num_features = min(size(features1, 1), size(features2,1));
-matches = [];
-confidences=[];
-[r1,c1]=size(features1);
-[r2,c2]=size(features2);
-for i=1:r1
-    for j=1:r2
-        dist(i,j)=norm(features1(i,:)-features2(j,:));     
+[row_size_1,~]=size(features1);
+[row_size_2,~]=size(features2);
+
+% Find normalized distances between features
+
+for i=1:row_size_1
+    for j=1:row_size_2
+        normed(i,j)=norm(features1(i,:)-features2(j,:));
     end
 end
-for i=1:r1
-    [val,indx]=sort(dist(i,:));
-    if ((val(1)/val(2))<0.8)
-          matches=[matches;i indx(1)];
-          confidences=[confidences 1-(val(1)/val(2))];
+
+ % Calculating Nearest Neigbours
+ 
+matches = [];
+confidences = [];
+
+for i=1:row_size_1
+    [arr,indices]=sort(normed(i,:));
+    if ((arr(1)/arr(2))<0.90)
+          matches=[matches;i indices(1)];
+          confidences=[confidences 1-(arr(1)/arr(2))];
     end
 end
 

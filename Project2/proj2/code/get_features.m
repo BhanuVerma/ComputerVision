@@ -55,58 +55,72 @@ function [features] = get_features(image, x, y, feature_width)
 % Another simple trick which can help is to raise each element of the final
 % feature vector to some power that is less than one.
 
-bins=8;
-H1=[];
-for z=1:length(x)
-    r=y(z);
-    c=x(z);
-    har=image(r-8:r+7,c-8:c+7);
-    bsize=4;
-    x1=size(har,1)/bsize; y1=size(har,2)/bsize; %f is the original image
-    q=bsize*ones(1,x1); n=bsize*ones(1,y1);
-    har=mat2cell(har,q,n);
-    H=[];
+final_hist=[];
+for ind=1:length(x)
+    % slice image 16x16
+    row=y(ind);
+    col=x(ind);
+    sliced_image=image(row-8:row+7,col-8:col+7);
+    
+    % slice by bin size
+    bin_size=4;
+    x_dash=size(sliced_image,1)/bin_size; 
+    y_dash=size(sliced_image,2)/bin_size;
+    dim_x=bin_size*ones(1,x_dash); 
+    dim_y=bin_size*ones(1,y_dash);
+    
+    % Array to Cell Array conversion
+    sliced_image=mat2cell(sliced_image,dim_x,dim_y);        
+    temp_hist=[];
+    
     for i=1:4
         for j=1:4
-            har1=cell2mat(har(i,j));
-            [mag,ang]=imgradient(har1);
-            mag1=zeros(1,8);
-            for k=1:4
+            arr=cell2mat(sliced_image(i,j));    % Cell Array to Array conversion
+            [magnitude,theta]=imgradient(arr);
+            mag_final=zeros(1,8);
+            for k=1:4                           % 4x4 grid celss
                 for l=1:4
-                    if (ang(k,l)>0 && ang(k,l)<45)
-                        mag1(1)=mag1(1)+mag(k,l);
-                    elseif (ang(k,l)>45 && ang(k,l)<90)
-                        mag1(2)=mag1(2)+mag(k,l);
-                    elseif (ang(k,l)>90 && ang(k,l)<135)
-                        mag1(3)=mag1(3)+mag(k,l);
-                    elseif (ang(k,l)>135 && ang(k,l)<180)
-                        mag1(4)=mag1(4)+mag(k,l);
-                    elseif (ang(k,l)>-45 && ang(k,l)<0)
-                        mag1(5)=mag1(5)+mag(k,l);
-                    elseif (ang(k,l)>-90 && ang(k,l)<-45)
-                        mag1(6)=mag1(6)+mag(k,l);
-                    elseif (ang(k,l)>-135 && ang(k,l)<-90)
-                        mag1(7)=mag1(7)+mag(k,l);
-                    elseif (ang(k,l)>-180 && ang(k,l)<-135)
-                        mag1(8)=mag1(8)+mag(k,l);
+                    if (theta(k,l)>=0 && theta(k,l)<45)
+                        mag_final(1)=mag_final(1)+magnitude(k,l);
+                    elseif (theta(k,l)>=45 && theta(k,l)<90)
+                        mag_final(2)=mag_final(2)+magnitude(k,l);
+                    elseif (theta(k,l)>=90 && theta(k,l)<135)
+                        mag_final(3)=mag_final(3)+magnitude(k,l);
+                    elseif (theta(k,l)>=135 && theta(k,l)<180)
+                        mag_final(4)=mag_final(4)+magnitude(k,l);
+                    elseif (theta(k,l)>=-45 && theta(k,l)<0)
+                        mag_final(5)=mag_final(5)+magnitude(k,l);
+                    elseif (theta(k,l)>=-90 && theta(k,l)<-45)
+                        mag_final(6)=mag_final(6)+magnitude(k,l);
+                    elseif (theta(k,l)>=-135 && theta(k,l)<-90)
+                        mag_final(7)=mag_final(7)+magnitude(k,l);
+                    elseif (theta(k,l)>=-180 && theta(k,l)<-135)
+                        mag_final(8)=mag_final(8)+magnitude(k,l);
                     end
                  end
             end
-            H=[H mag1];                       
+            temp_hist=[temp_hist mag_final];                       
         end
     end
-    d=norm(H);
-    H=H./d;
-    for w=1:128
-        if(H(w)>0.2)
-            H(w)=0.2;
+    
+    % normalized to unit length
+    normalized=norm(temp_hist);
+    temp_hist=temp_hist./normalized;
+    
+    for dim=1:128                              % 4*4*8
+        if(temp_hist(dim)>0.25)
+            temp_hist(dim)=0.25;
         end
     end
-    d=norm(H);
-    H=H./d;
-    H1=[H1;H];   
+    
+    % normalized again
+    normalized=norm(temp_hist);
+    temp_hist=temp_hist./normalized;
+    
+    final_hist=[final_hist;temp_hist];   
 end
-features=H1;
+
+features=final_hist;
 
 end
 

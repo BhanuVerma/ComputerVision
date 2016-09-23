@@ -1,0 +1,300 @@
+<html>
+<head>
+<title>Computer Vision Project</title>
+<link href='http://fonts.googleapis.com/css?family=Nunito:300|Crimson+Text|Droid+Sans+Mono' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" title="Default" href="styles/github.css">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>  
+
+<link rel="stylesheet" href="highlighting/styles/default.css">
+<script src="highlighting/highlight.pack.js"></script>
+
+<style type="text/css">
+body {
+	margin: 0px;
+	width: 100%;
+	font-family: 'Crimson Text', serif;
+	font-size: 20px;
+	background: #fcfcfc;
+}
+h1 {
+	font-family: 'Nunito', sans-serif;
+	font-weight: normal;
+	font-size: 28px;
+	margin: 25px 0px 0px 0px;
+	/*text-transform: lowercase;*/
+
+}
+
+h2 {
+	font-family: 'Nunito', sans-serif;
+	font-weight: normal;
+	font-size: 32px;
+	margin: 15px 0px 35px 0px;
+	color: #333;	
+	word-spacing: 3px;
+}
+
+h3 {
+	font-family: 'Nunito', sans-serif;
+	font-weight: normal;
+	font-size: 26px;
+	margin: 10px 0px 10px 0px;
+	color: #333;
+	word-spacing: 2px;
+}
+h4 {
+	font-family: 'Nunito', sans-serif;
+	font-weight: normal;
+	font-size: 22px;
+	margin: 10px 0px 10px 0px;
+	color: #333;
+	word-spacing: 2px;
+}
+
+h5 {
+	font-family: 'Nunito', sans-serif;
+	font-weight: normal;
+	font-size: 18px;
+	margin: 10px 0px 10px 0px;
+	color: #111;
+	word-spacing: 2px;
+}
+
+p, li {
+	color: #444;
+}
+
+a {
+	color: #DE3737;
+}
+
+.container {
+	margin: 0px auto 0px auto;
+	width: 960px;
+}
+
+#header {
+	background: #333;
+	width: 100%;
+}
+
+#headersub {
+	color: #ccc;
+	width: 960px;
+	margin: 0px auto 0px auto;
+	padding: 20px 0px 20px 0px;
+}
+
+.chart {
+	width: 480px;
+}
+.lol {
+	font-size: 16px;
+	color: #888;
+	font-style: italic;
+}
+.sep {
+	height: 1px;
+	width: 100%;
+	background: #999;
+	margin: 20px 0px 20px 0px;
+}
+.footer{
+	font-size: 16px;
+}
+.latex {
+	width: 100%;
+}
+
+.latex img {
+	display: block;
+	margin: 0px auto 0px auto;
+}
+
+pre {
+	font-family: 'Droid Sans Mono';
+	font-size: 14px;
+}
+
+td img {
+  vertical-align: middle;
+}
+
+#contents a {
+}
+</style>
+<script type="text/javascript">
+    hljs.initHighlightingOnLoad();
+</script>
+</head>
+<body>
+<div id="header" >
+<div id="headersub">
+<h1><span style="color: #DE3737">Bhanu Verma 903151012</span></h1>
+</div>
+</div>
+<div class="container">
+
+<h2>Project 2: Local Feature Matching</h2>
+
+<div style="float: right; padding: 20px">
+<img src="images/Notre Dame/ND-Figure4.jpg" />
+<p style="font-size: 14px">Notre Dame interest points</p>
+</div>
+
+<p> Goal of this project is to create a feature matching algorithm. Algorithm works in three major steps:</p>
+
+<ol>
+<li>Interest point detection</li>
+<li>Feature extraction</li>
+<li>Feature match</li>
+</ol>
+
+<h3>Interest Point Detection</h3>
+<p> We have used Harris detector as explained in Szeliski 4.1.1 for detecting interest points between two images. We first use gaussian filter with image to add some blur. Next step is to compute horizontal and vertical derivatives of the image Ix and Iy by convolving the original image with derivatives of Gaussians. Then, we convolve each image with a large Gaussian followed by computation of scalar interest measure (harris detector). Final step is normalizing harris detector points and then taking only maximal points as interest point locations. </p>
+
+<pre><code>
+% Step 1 - Compute the horizontal and vertical derivatives of the image Ix and Iy by convolving the
+% original image with  derivatives of Gaussians
+
+blurring_filter = fspecial('gaussian', 3, 0.5);
+image=imfilter(image,blurring_filter,'same');    % blurring with the help of gaussian filter 
+[G_x,G_y]=gradient(blurring_filter);
+I_x=imfilter(image,G_x);                         % X derivative
+I_y=imfilter(image,G_y);                         % Y derivative
+
+% Step 2 - Compute the three images corresponding to the outer products of these gradients i.e Ixx,Iyy and Ixy
+
+Ixx = I_x.*I_x;
+Iyy = I_y.*I_y;
+Ixy = I_x.*I_y;
+
+% Step 3 - Convolution of each of each image with a larger Gaussian
+
+gaussian_filter = fspecial('gaussian', feature_width, 0.5); %designing a filter
+I_xx=imfilter(Ixx, gaussian_filter); 
+I_yy=imfilter(Iyy, gaussian_filter);
+I_xy=imfilter(Ixy, gaussian_filter);
+
+% Step 4 - Computation of scalar interest measure using det(A) - alpha(trace(A)^2) i.e. 
+% lambda0 * lambda1 - alpha(lambda0 + lamda1)^2
+
+alpha = 0.05;       % value proposed by Harris and Stephens (1988)
+threshold_val = 0.005;
+harris_detector = (I_xx.*I_yy - I_xy.^2) - alpha*((I_xx+I_yy).^2);
+normalized_detector = harris_detector/max(max(harris_detector));
+normalized_detector(normalized_detector < threshold_val)=0;
+
+% Step 5 - Detecting only local maximal points as feature point locations
+
+filter_size = 3;
+colfiltered = colfilt(normalized_detector,[filter_size filter_size],'sliding',@max);
+border_filter = zeros(size(colfiltered));
+padding_size = 10;
+border_filter(padding_size+1:end-padding_size, padding_size+1:end-padding_size) = 1;
+harris_detector = normalized_detector .*(normalized_detector==colfiltered) & border_filter;
+harris_detector(harris_detector)=1;
+
+[y,x] = find(harris_detector);
+figure();
+imshow(image);
+hold on
+scatter(x,y,'red');
+
+</code></pre>
+
+<h3>Feature Extraction</h3>
+<p> After extracting interest points, we build a descriptor vector for every interest location. For extracting features, we have used SIFT descriptor i.e. Szeliski 4.1.2. These feature vectors are invariant to rotation and translation. In our implementation, we take a 16x16 region around every interest point and divid it into 16 blocks of 4x4. In each block, we calculate gradient for each point and allocate them into 8 bins depending on their theta values. We build a vector of dimension size 128 after we repeat the bin allocation for each point in 16x16 region. We get one vector for each interest point. Normalizing, removing all values under 0.25 and normalizing again further improves our performanceTo further improve the results we normalize each 128 dimension vector, clip all values greater than 0.25 to 0.25 and renormalize. </p>
+
+<pre><code>
+final_hist=[];
+for ind=1:length(x)
+    % slice image 16x16
+    row=y(ind);
+    col=x(ind);
+    sliced_image=image(row-8:row+7,col-8:col+7);
+    
+    % slice by bin size
+    bin_size=4;
+    x_dash=size(sliced_image,1)/bin_size; 
+    y_dash=size(sliced_image,2)/bin_size;
+    dim_x=bin_size*ones(1,x_dash); 
+    dim_y=bin_size*ones(1,y_dash);
+    
+    % Array to Cell Array conversion
+    sliced_image=mat2cell(sliced_image,dim_x,dim_y);        
+    temp_hist=[];
+    
+    for i=1:4
+        for j=1:4
+            arr=cell2mat(sliced_image(i,j));    % Cell Array to Array conversion
+            [magnitude,theta]=imgradient(arr);
+            mag_final=zeros(1,8);
+            for k=1:4                           % 4x4 grid celss
+                for l=1:4
+                    if (theta(k,l)>=0 && theta(k,l) < 45)
+                        mag_final(1)=mag_final(1)+magnitude(k,l);
+                    elseif (theta(k,l)>=45 && theta(k,l) < 90)
+                        mag_final(2)=mag_final(2)+magnitude(k,l);
+                    elseif (theta(k,l)>=90 && theta(k,l) < 135)
+                        mag_final(3)=mag_final(3)+magnitude(k,l);
+                    elseif (theta(k,l)>=135 && theta(k,l) < 180)
+                        mag_final(4)=mag_final(4)+magnitude(k,l);
+                    elseif (theta(k,l)>=-45 && theta(k,l) < 0)
+                        mag_final(5)=mag_final(5)+magnitude(k,l);
+                    elseif (theta(k,l)>=-90 && theta(k,l)<-45)
+                        mag_final(6)=mag_final(6)+magnitude(k,l);
+                    elseif (theta(k,l)>=-135 && theta(k,l)<-90)
+                        mag_final(7)=mag_final(7)+magnitude(k,l);
+                    elseif (theta(k,l)>=-180 && theta(k,l)<-135)
+                        mag_final(8)=mag_final(8)+magnitude(k,l);
+                    end
+                 end
+            end
+            temp_hist=[temp_hist mag_final];                       
+        end
+    end
+    
+    % normalized to unit length
+    normalized=norm(temp_hist);
+    temp_hist=temp_hist./normalized;
+    
+    for dim=1:128                              % 4*4*8
+        if(temp_hist(dim)>0.25)
+            temp_hist(dim)=0.25;
+        end
+    end
+    
+    % normalized again
+    normalized=norm(temp_hist);
+    temp_hist=temp_hist./normalized;
+    
+    final_hist=[final_hist;temp_hist];   
+end
+
+features=final_hist;
+
+</code></pre>
+
+<h3>Feature match</h3>
+<p>After generating feature vectors, we try to find the most similar features for two images. We have used Ratio test distance for finding the similarity. We compute normalized distances between each pair of feature. Next step is to sort all values and then use ratio test for determining a match. We are also calculating confidence for each match and sorting them in descending order before returning matches and their confidence score.</p>
+
+<h3>Final Results</h3>
+<h4>Notre Dame</h4>
+<img src="images/Notre Dame/Figure1.jpg" width="60%"/>
+<img src="images/Notre Dame/Figure3.jpg" width="60%"/>
+
+<h4>Mount Rushmore</h4>
+<img src="images/Notre Dame/Figure3.jpg" width="60%"/>
+<img src="images/Notre Dame/Figure4.jpg" width="60%"/>
+
+<h4>House</h4>
+<img src="images/House/Figure2.jpg" width="60%"/>
+<img src="images/House/Figure3.jpg" width="60%"/>
+
+<h4>Sleeping Beauty Castle Paris</h4>
+<img src="images/Sleeping Beauty Castle Paris/Figure1.jpg" width="60%"/>
+<img src="images/Sleeping Beauty Castle Paris/Figure3.jpg" width="60%"/>
+
+</body>
+</html>

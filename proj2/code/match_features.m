@@ -40,7 +40,7 @@ confidences = [];
 
 for i=1:row_size_1
     [arr,indices]=sort(normed(i,:));
-    if ((arr(1)/arr(2))<0.90)
+    if ((arr(1)/arr(2))<0.8)
           matches=[matches;i indices(1)];
           confidences=[confidences 1-(arr(1)/arr(2))];
     end

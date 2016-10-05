@@ -108,8 +108,8 @@ for ind=1:length(x)
     temp_hist=temp_hist./normalized;
     
     for dim=1:128                              % 4*4*8
-        if(temp_hist(dim)>0.25)
-            temp_hist(dim)=0.25;
+        if(temp_hist(dim)>0.2)
+            temp_hist(dim)=0.2;
         end
     end
     

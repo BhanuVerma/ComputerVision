@@ -1,0 +1,244 @@
+<html>
+<head>
+<title>Computer Vision Project</title>
+<link href='http://fonts.googleapis.com/css?family=Nunito:300|Crimson+Text|Droid+Sans+Mono' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" title="Default" href="styles/github.css">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>  
+
+<link rel="stylesheet" href="highlighting/styles/default.css">
+<script src="highlighting/highlight.pack.js"></script>
+
+<style type="text/css">
+body {
+	margin: 0px;
+	width: 100%;
+	font-family: 'Crimson Text', serif;
+	font-size: 20px;
+	background: #fcfcfc;
+}
+h1 {
+	font-family: 'Nunito', sans-serif;
+	font-weight: normal;
+	font-size: 28px;
+	margin: 25px 0px 0px 0px;
+	/*text-transform: lowercase;*/
+
+}
+
+h2 {
+	font-family: 'Nunito', sans-serif;
+	font-weight: normal;
+	font-size: 32px;
+	margin: 15px 0px 35px 0px;
+	color: #333;	
+	word-spacing: 3px;
+}
+
+h3 {
+	font-family: 'Nunito', sans-serif;
+	font-weight: normal;
+	font-size: 26px;
+	margin: 10px 0px 10px 0px;
+	color: #333;
+	word-spacing: 2px;
+}
+h4 {
+	font-family: 'Nunito', sans-serif;
+	font-weight: normal;
+	font-size: 22px;
+	margin: 10px 0px 10px 0px;
+	color: #333;
+	word-spacing: 2px;
+}
+
+h5 {
+	font-family: 'Nunito', sans-serif;
+	font-weight: normal;
+	font-size: 18px;
+	margin: 10px 0px 10px 0px;
+	color: #111;
+	word-spacing: 2px;
+}
+
+p, li {
+	color: #444;
+}
+
+a {
+	color: #DE3737;
+}
+
+.container {
+	margin: 0px auto 0px auto;
+	width: 960px;
+}
+
+#header {
+	background: #333;
+	width: 100%;
+}
+
+#headersub {
+	color: #ccc;
+	width: 960px;
+	margin: 0px auto 0px auto;
+	padding: 20px 0px 20px 0px;
+}
+
+.chart {
+	width: 480px;
+}
+.lol {
+	font-size: 16px;
+	color: #888;
+	font-style: italic;
+}
+.sep {
+	height: 1px;
+	width: 100%;
+	background: #999;
+	margin: 20px 0px 20px 0px;
+}
+.footer{
+	font-size: 16px;
+}
+.latex {
+	width: 100%;
+}
+
+.latex img {
+	display: block;
+	margin: 0px auto 0px auto;
+}
+
+pre {
+	font-family: 'Droid Sans Mono';
+	font-size: 14px;
+}
+
+td img {
+  vertical-align: middle;
+}
+
+#contents a {
+}
+</style>
+<script type="text/javascript">
+    hljs.initHighlightingOnLoad();
+</script>
+</head>
+<body>
+<div id="header" >
+<div id="headersub">
+<h1><span style="color: #DE3737">Bhanu Verma 903151012</span></h1>
+</div>
+</div>
+<div class="container">
+
+<h2> Project 3 - Camera Calibration and Fundamental Matrix Estimation with RANSAC</h2>
+
+
+<p>The goal of the project is to perform camera caliberation and estimate the fundamental matrix using RANSAC. This project is divided into 3 parts:  </p>
+
+<ol>
+<li>Camera Projection Matrix</li>
+<li>Fundamental Matrix Estimation</li>
+<li>Fundamental Matrix Estimation with RANSAC</li>
+</ol>
+
+<h2>Part 1: Camera Projection Matrix</h2>
+<p>The projection matrix is a 3x4 matrix that that maps pinhole camera 3d points to 2d points in an image. The following projection matrix was obtained </p>
+
+<p> The projection matrix is :</p>
+
+<pre><code>
+
+The projection matrix is:
+    0.7679   -0.4938   -0.0234    0.0067
+   -0.0852   -0.0915   -0.9065   -0.0878
+    0.1827    0.2988   -0.0742    1.0000
+
+
+The total residual is: 0.0445
+
+The estimated location of camera is: [-1.5126, -2.3517, 0.2827]
+
+</code></pre>
+
+<div style="clear:both">
+<h2>Part 2: Fundamental Matrix Estimation</h2>
+
+<p>The fundamental matrix F is used for obtaining epipolar geometry. The following fundamental matrix is calculated for the given base image pair </p>
+
+<pre><code>
+F_matrix =
+
+   -0.0000    0.0000   -0.0007
+    0.0000   -0.0000    0.0055
+   -0.0000   -0.0075    0.1740
+</code></pre>
+
+<h3>Normalization</h3>
+
+<h4>Without Normalization</h4>
+<img align="center" src="img\woN1.png" width="47%"/>
+<img align="center" src="img\woN2.png" width="47%"/>
+<h4>With Normalization</h4>
+<img align="center" src="img\N1.png" width="47%"/>
+<img align="center" src="img\N2.png" width="47%"/>
+<p> As evident from above, normalization helps the line in passing through matched points.
+<br>
+<h2>Part 3: Fundamental Matrix Estimation with RANSAC</h2>
+
+<br>
+<h4>Part 3 Results</h4>
+
+<table border=1> 
+
+<tr> 
+<td> 
+	<h2>Mount Rushmore - Normalized - Threshold - 0.08</h2> 
+<img src="img/mrw.png" width="25%"/> 
+<img src="img/mrw1.png" width="25%"/> 
+<img src="img/mrw2.png" width="25%"/> 
+</td> 
+</tr> 
+
+<tr> 
+<td> 
+	<h2>Mount Rushmore - Non Normalized - Threshold - 0.08</h2> 
+<img src="img/mr0.05.png" width="25%"/> 
+<img src="img/mr0.05w.png" width="25%"/> 
+<img src="img/mr0.05w1.png" width="25%"/> 
+</td> 
+</tr>  
+
+
+<tr> 
+<td> 
+	<h2>Notre Dame</h2> 
+<img src="img/nd.png" width="25%"/> 
+<img src="img/nd1.png" width="25%"/> 
+<img src="img/nd2.png" width="25%"/>
+</td> 
+</tr> 
+
+
+<tr> 
+<td> 
+	<h2>Episcopal Gaudi</h2> 
+<img src="img/eg.png" width="25%"/> 
+<img src="img/eg1.png" width="25%"/> 
+<img src="img/eg2.png" width="25%"/> 
+</td> 
+</tr> 
+
+</table> 
+
+<div style="clear:both" >
+<h2>Conclusion</h2>
+<p>We clearly saw how using RANSAC for generation of fundamental matrix can help in removing the spurious matches and we can get almost point to point perfect matching.</p>
+</div>
+</body>
+
+</html>

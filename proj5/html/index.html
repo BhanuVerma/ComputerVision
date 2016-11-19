@@ -1,0 +1,217 @@
+<html>
+<head>
+<title>Computer Vision Project</title>
+<link href='http://fonts.googleapis.com/css?family=Nunito:300|Crimson+Text|Droid+Sans+Mono' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" title="Default" href="styles/github.css">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>  
+
+<link rel="stylesheet" href="highlighting/styles/default.css">
+<script src="highlighting/highlight.pack.js"></script>
+
+<style type="text/css">
+body {
+	margin: 0px;
+	width: 100%;
+	font-family: 'Crimson Text', serif;
+	font-size: 20px;
+	background: #fcfcfc;
+}
+h1 {
+	font-family: 'Nunito', sans-serif;
+	font-weight: normal;
+	font-size: 28px;
+	margin: 25px 0px 0px 0px;
+	/*text-transform: lowercase;*/
+
+}
+
+h2 {
+	font-family: 'Nunito', sans-serif;
+	font-weight: normal;
+	font-size: 32px;
+	margin: 15px 0px 35px 0px;
+	color: #333;	
+	word-spacing: 3px;
+}
+
+h3 {
+	font-family: 'Nunito', sans-serif;
+	font-weight: normal;
+	font-size: 26px;
+	margin: 10px 0px 10px 0px;
+	color: #333;
+	word-spacing: 2px;
+}
+h4 {
+	font-family: 'Nunito', sans-serif;
+	font-weight: normal;
+	font-size: 22px;
+	margin: 10px 0px 10px 0px;
+	color: #333;
+	word-spacing: 2px;
+}
+
+h5 {
+	font-family: 'Nunito', sans-serif;
+	font-weight: normal;
+	font-size: 18px;
+	margin: 10px 0px 10px 0px;
+	color: #111;
+	word-spacing: 2px;
+}
+
+p, li {
+	color: #444;
+}
+
+a {
+	color: #DE3737;
+}
+
+.container {
+	margin: 0px auto 0px auto;
+	width: 960px;
+}
+
+#header {
+	background: #333;
+	width: 100%;
+}
+
+#headersub {
+	color: #ccc;
+	width: 960px;
+	margin: 0px auto 0px auto;
+	padding: 20px 0px 20px 0px;
+}
+
+.chart {
+	width: 480px;
+}
+.lol {
+	font-size: 16px;
+	color: #888;
+	font-style: italic;
+}
+.sep {
+	height: 1px;
+	width: 100%;
+	background: #999;
+	margin: 20px 0px 20px 0px;
+}
+.footer{
+	font-size: 16px;
+}
+.latex {
+	width: 100%;
+}
+
+.latex img {
+	display: block;
+	margin: 0px auto 0px auto;
+}
+
+pre {
+	font-family: 'Droid Sans Mono';
+	font-size: 14px;
+}
+
+td img {
+  vertical-align: middle;
+}
+
+#contents a {
+}
+</style>
+<script type="text/javascript">
+    hljs.initHighlightingOnLoad();
+</script>
+</head>
+<body>
+<div id="header" >
+<div id="headersub">
+<h1><span style="color: #DE3737">Bhanu Verma 903151012</span></h1>
+</div>
+</div>
+<div class="container">
+
+<h2> Project 5 / Face Detection with a Sliding Window</h2>
+
+<p>The objective of the Project is to detect faces in images using a sliding window detector. The sliding window model is conceptually simple: independently classify all image patches as being object or non-object. Sliding window classification is the dominant paradigm in object detection and for one object category in particular -- faces -- it is one of the most noticeable successes of computer vision. It has the following steps: </p>
+
+<ol>
+<li>Extraction of Positive Features</li>
+<li>Extraction of Random Negative Features</li>
+<li>Linear SVM Classifier</li>
+<li>Sliding Window Detector</li>
+</ol>
+
+<div style="clear:both">
+<h3>Extraction of Positive Features</h3>
+<p>For every 36x36 face we compute its HOG features using the vl_hog function using the HOG cell size 6 & 3. Then we reshape each image and concatenate for every single image. This is our positive data that will extract the faces from the images.	</p>
+
+<h3>Extraction of Random Negative Features</h3>
+<p>For this step we repeat the above steps but for random scene images. Then we find a random index of the image from which we crop 36x36 image and find its hog features.</p>
+
+<h3>Linear SVM Classifier</h3>
+<p>After finding positive and negative features we train our data to learn the classification of faces and non-faces. This is done using vl_svmtrain method which take positive and negative features as input.</p> 
+
+<h3>Sliding Window Detector</h3>
+<p>We convert the test images to hog feature space. Then using a sliding window in hog space we move using a 9x9 window, we multiply each window with new weights and compute the confidence. If confidence is greater than 0.1 its classified as positive match and we find its pixel co-ordinates and create a bounding box around the positive. We then do non-maximal suppression which remove boxes that intersects by more than half. This is done for every image in 10 different scales.</p>
+
+
+<h3>Results</h3>
+<table border=1>
+<tr>
+<td>
+<div style="float: center; padding: 20px">
+<img src="plot_6.png" width=60%/>
+<p style="font-size: 15px">The plot of number of positive feaures extracted and negtive features extracted. Green line is the no. of positive features plot and red line is the no. of negative features</p>
+</div>
+</td>
+</tr>
+
+<tr>
+<td>
+<div style="float: center; padding: 20px">
+<img src="Face_Template_6.png" width=47%/>
+<img src="Face_Template_3.png" width=47%/>
+<p style="font-size: 15px">Face Template for cell size 6 and 3 respectively.</p>
+</div>
+</td>
+</tr>
+
+<tr>
+<td>
+<div style="float: center; padding: 20px">
+<img src="Recall_6.png" width=47%/>
+<img src="Recall_3.png" width=47%/>
+<p style="font-size: 15px">Recall for cell size 6 and 3</p>
+</div>
+</td>
+</tr>
+
+<tr>
+<td>
+<div style="float: center; padding: 20px">
+<img src="precision_6.png" width=47%/>
+<img src="Argentina_6.png" width=47%/>
+<p style="font-size: 15px">Accuracy Average precision for multiscale with hard mining and sample image with cell size 6.</p>
+<p style="font-size: 15px">The average precision is 79.2%.</p>
+</div>
+</td>
+</tr>
+
+<tr>
+<td>
+<div style="float: center; padding: 20px">
+<img src="precision_3.png" width=47%/>
+<img src="Argentina_3.png" width=47%/>
+<p style="font-size: 15px">Accuracy Average precision for multiscale with hard mining and sample image with cell size 3.</p>
+<p style="font-size: 15px">The average precision is 85.2%.</p>
+</div>
+</td>
+</tr>
+</table>
+</body>
+</html>

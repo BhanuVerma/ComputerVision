@@ -69,6 +69,7 @@ sampled_features = sift_features(:,indices);
 sampled_features = single(sampled_features);
 [centres,~] = vl_kmeans(sampled_features,vocab_size);
 vocab = centres';
+
 end
 
 

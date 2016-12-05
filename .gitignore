@@ -45,6 +45,8 @@ coverage.xml
 *,cover
 .hypothesis/
 
+*.mat
+matconvnet-1.0-beta16/
 data/
 thumbnails/
 vlfeat/

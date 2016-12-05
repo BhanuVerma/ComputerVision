@@ -24,7 +24,7 @@ opts.learningRate = 0.0001 ;
 % opts.numEpochs is the number of epochs. If you experiment with more
 % complex networks you might need to increase this. Likewise if you add
 % regularization that slows training.
-opts.numEpochs = 90 ;
+opts.numEpochs = 10 ;
 
 % An example of learning rate decay as an alternative to the fixed learning
 % rate used by default. This isn't necessary but can lead to better
@@ -56,7 +56,8 @@ net = proj6_part2_cnn_init();
 % if exist(opts.imdbPath, 'file')
 %   imdb = load(opts.imdbPath) ;
 % else
-  imdb = proj6_part2_setup_data(net.normalization.averageImage);
+imdb = proj6_part2_setup_data();
+% imdb = proj6_part2_setup_data(net.normalization.averageImage);
 %   mkdir(opts.expDir) ;
 %   save(opts.imdbPath, '-struct', 'imdb') ;
 % end
@@ -71,6 +72,7 @@ net = proj6_part2_cnn_init();
     opts, ...
     'val', find(imdb.images.set == 2)) ;
 
+fprintf('Lowest validation erorr is %f\n',min(info.val.error(1,:)))
 end
 
 % --------------------------------------------------------------------

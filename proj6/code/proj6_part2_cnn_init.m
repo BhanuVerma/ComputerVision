@@ -3,6 +3,28 @@ function net = proj6_part2_cnn_init()
 
 net = load('imagenet-vgg-f.mat') ;
 
+f=1/100; 
+%We'll need to make some modifications to this network. First, the network
+%accepts 
+
+                       
+net.layers{21} = struct('type','dropout',...
+                            'rate',0.5);
+
+net.layers{20} = net.layers{19};
+
+net.layers{19} = net.layers{18};
+                       
+net.layers{18} = struct('type','dropout',...
+                            'rate',0.5);                     
+net.layers{22} = struct('type', 'conv', ... 
+                           'weights', {{f*randn(1,1,4096,15, 'single'), zeros(1, 15, 'single')}}, ...
+                           'stride', 1, ...
+                           'pad', 0, ...
+                           'name', 'fc8') ;
+
+net.layers{23} = struct('type', 'softmaxloss') ;
+
 vl_simplenn_display(net, 'inputSize', [224 224 3 50])
 
 % [copied from the project webpage]

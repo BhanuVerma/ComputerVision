@@ -59,7 +59,8 @@ fprintf('Each image will be resized to %d by %d\n', image_size(1),image_size(2))
 for set = 1:length(sets)
     for category = 1:length(categories)
         cur_path = fullfile( SceneJPGsPath, sets{set}, categories{category});
-        cur_images = dir( fullfile( cur_path,  '*.jpg') );      
+        cur_images = dir( fullfile( cur_path,  '*.jpg') );
+        
         if(set == 1)
             fprintf('Taking %d out of %d images in %s\n', num_train_per_category, length(cur_images), cur_path);
             cur_images = cur_images(1:num_train_per_category);
@@ -67,6 +68,7 @@ for set = 1:length(sets)
             fprintf('Taking %d out of %d images in %s\n', num_test_per_category, length(cur_images), cur_path);
             cur_images = cur_images(1:num_test_per_category);
         end
+        
         for i = 1:length(cur_images)
             cur_image = imread(fullfile(cur_path, cur_images(i).name));
             cur_image = single(cur_image);

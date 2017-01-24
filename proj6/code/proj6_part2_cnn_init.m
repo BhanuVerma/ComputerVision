@@ -4,9 +4,6 @@ function net = proj6_part2_cnn_init()
 net = load('imagenet-vgg-f.mat') ;
 
 f=1/100; 
-%We'll need to make some modifications to this network. First, the network
-%accepts 
-
                        
 net.layers{21} = struct('type','dropout',...
                             'rate',0.5);

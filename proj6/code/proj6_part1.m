@@ -98,18 +98,15 @@ labels = imdb.images.labels(1,batch) ;
 
 % Add jittering here before returning im
 
-% x=randi([0 1],1);
-% if (x==0)
-%     im=fliplr(im);
-% end
-
 for i = 1: 50
+    % mean normalization
     im_mean = sum(sum(im(:,:,:,i)))/(size(im,1) * size(im,2));
-    im_final(:,:,:,i) = im(:,:,:,i) - im_mean;  %making image zero centred
+    im_final(:,:,:,i) = im(:,:,:,i) - im_mean;
 end
 
 random_samples = randsample(50,25);
-im_final(:,:,:,random_samples) = fliplr(im_final(:,:,:,random_samples));%mirroring few images
+% flipping images
+im_final(:,:,:,random_samples) = fliplr(im_final(:,:,:,random_samples));
 im = im_final;
 
 end

@@ -45,7 +45,6 @@ for set = 1:length(sets)
         end
 
         for i = 1:length(cur_images)
-
             cur_image = imread(fullfile(cur_path, cur_images(i).name));
             cur_image = single(cur_image);
             if(size(cur_image,3) > 1)

@@ -21,7 +21,7 @@ h1 {
 	font-weight: normal;
 	font-size: 28px;
 	margin: 25px 0px 0px 0px;
-	text-transform: lowercase;
+	/*text-transform: lowercase;*/
 
 }
 
@@ -70,7 +70,7 @@ a {
 
 .container {
 	margin: 0px auto 0px auto;
-	width: 1160px;
+	width: 960px;
 }
 
 #header {
@@ -116,13 +116,7 @@ pre {
 	font-size: 14px;
 }
 
-table td {
-  text-align: center;
-  vertical-align: middle;
-}
-
-table td img {
-  text-align: center;
+td img {
   vertical-align: middle;
 }
 
@@ -136,63 +130,117 @@ table td img {
 <body>
 <div id="header" >
 <div id="headersub">
-<h1>Your Name </h1>
+<h1><span style="color: #DE3737">Bhanu Verma 903151012</span></h1>
 </div>
 </div>
 <div class="container">
 
 <h2> Project 6 / Deep Learning</h2>
 
-<div style="float: right; padding: 20px">
-<img src="placeholder.jpg" />
-<p style="font-size: 14px">Example of a right floating element.</p>
-</div>
+<p>The objective of the project is to design and develop deep convolution networks for scene recognition using MatConvNet toolbox. Project is separated into two parts, first one being training a deep convolutional network from scratch and improving accuracy by jittering, normalization and regularization. Second project requires us to fine tune a pre-trained network to improve accuracy beyond and above 85 percent.</p>
 
-<p> 	Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+<h2>Part 1</h2>
+
+<p> In part 1, we improve our accuracy by doing following things: </p>
 
 <ol>
-<li>list element 1.</li>
-<li>list element 2.</li>
-<li>etc.</li>
+<li>Jittering</li>
+<li>Normalization</li>
+<li>Regularization</li>
+<li>Making a Deep Network</li>
 </ol>
 
-<p> 	Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+<h3>1.Jittering</h3>
+<p>Jitterning here means randomly flipping some images. If we flip an image it does not change its category but it results in increase of the training data and it helps for the training.</p>
 
-<div style="clear:both">
-<h3>Example heading</h3>
-
-<p> 	Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-
-<h2>Example of code with highlighting</h2>
-The javascript in the <code>highlighting</code> folder is configured to do syntax highlighting in code blocks such as the one below.<p>
+<h3>2.Normalization</h3>
+<p>The images that we have aren't normalized. So we perform a zero mean normalization by subtracting mean from each image.</p>
 
 <pre><code>
-%example code
-for i = 1:length(offset)
-    source = imread(sprintf('%s/source_%02d.jpg',data_dir,i));
-    mask   = imread(sprintf('%s/mask_%02d.jpg',data_dir,i));
-    target = imread(sprintf('%s/target_%02d.jpg',data_dir,i));
+for i = 1: 50
+    % mean normalization
+    im_mean = sum(sum(im(:,:,:,i)))/(size(im,1) * size(im,2));
+    im_final(:,:,:,i) = im(:,:,:,i) - im_mean;
+end
+
+random_samples = randsample(50,25);
+% flipping images
+im_final(:,:,:,random_samples) = fliplr(im_final(:,:,:,random_samples));
+im = im_final;
 
 </code></pre>
+
+<h3>3.Regularization</h3>
+<p>We regularize out network by adding a layer with dropout rate of 0.5. This dropout layer reduces the dependence of one layer on a previous layer.</p>
+
+<h3>4.Making a Deep Network</h3>
+<p>We make our network deep by adding more layers, convolution layer, max-pool layer and relu layer.</p>
+
+<pre><code>
+% layers in our network
+net.layers = {} ;
+
+net.layers{end+1} = struct('type', 'conv', ...
+                           'weights', {{f*randn(9,9,1,10, 'single'), zeros(1, 10, 'single')}}, ...
+                           'stride', 1, ...
+                           'pad', 0, ...
+                           'name', 'conv1') ;
+                       
+net.layers{end+1} = struct('type', 'pool', ...
+                           'method', 'max', ...
+                           'pool', [7 7], ...
+                           'stride', 5, ...
+                           'pad', 0) ;
+
+net.layers{end+1} = struct('type', 'relu') ;
+
+net.layers{end+1} = struct('type', 'conv', ...
+                           'weights', {{f*randn(3,3,10,15, 'single'), zeros(1, 15, 'single')}}, ...
+                           'stride', 1, ...
+                           'pad', 0, ...
+                           'name', 'conv1') ;
+
+net.layers{end+1} = struct('type', 'pool', ...
+                           'method', 'max', ...
+                           'pool', [2 2], ...
+                           'stride', 2, ...
+                           'pad', 0) ;  %making the network deeper
+
+% net.layers{end+1} = struct('type', 'relu') ;
+
+net.layers{end+1} = struct('type','dropout','rate',0.5);
+                        
+net.layers{end+1} = struct('type', 'conv', ...
+                           'weights', {{f*randn(4,4,15,25, 'single'), zeros(1, 25, 'single')}}, ...
+                           'stride', 1, ...
+                           'pad', 0, ...
+                           'name', 'fc1') ;
+                      
+% Loss layer
+net.layers{end+1} = struct('type', 'softmaxloss') ;
+
+% Visualize the network
+vl_simplenn_display(net, 'inputSize', [64 64 1 50])
+</code></pre>
+
+<div style="clear:both">
 
 <h3>Results in a table</h3>
 
 <table border=1>
+
 <tr>
 <td>
-<img src="placeholder.jpg" width="24%"/>
-<img src="placeholder.jpg"  width="24%"/>
-<img src="placeholder.jpg" width="24%"/>
-<img src="placeholder.jpg" width="24%"/>
+<img src="figure1.png">
+<p>Objective and Training error plots for part 1</p>
+<p>The accuracy achieved is about 55.3%</p>
 </td>
 </tr>
 
 <tr>
 <td>
-<img src="placeholder.jpg" width="24%"/>
-<img src="placeholder.jpg"  width="24%"/>
-<img src="placeholder.jpg" width="24%"/>
-<img src="placeholder.jpg" width="24%"/>
+<img src="filters.png">
+<p>Filters for part 1</p>
 </td>
 </tr>
 
@@ -200,14 +248,91 @@ for i = 1:length(offset)
 
 <center>
 
-<img src="plot.png">
-<p>
-<img src="filters.png">
-
 </center>
 
-<div style="clear:both" >
-<p> 	Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-</div>
+<h2>Part 2</h2>
+
+<p> For part 2 of this project, we increase the accuracy by fine-tuning the pre-trained network. We do this by resizing the input images to 224x224. Grayscale images converted to RGB images as the VGG-F network accepts RGB images. </p>
+
+<pre><code>
+%Read each image and resize it to 224x224
+for set = 1:length(sets)
+    for category = 1:length(categories)
+        cur_path = fullfile( SceneJPGsPath, sets{set}, categories{category});
+        cur_images = dir( fullfile( cur_path,  '*.jpg') );
+        
+        if(set == 1)
+            fprintf('Taking %d out of %d images in %s\n', num_train_per_category, length(cur_images), cur_path);
+            cur_images = cur_images(1:num_train_per_category);
+        elseif(set == 2)
+            fprintf('Taking %d out of %d images in %s\n', num_test_per_category, length(cur_images), cur_path);
+            cur_images = cur_images(1:num_test_per_category);
+        end
+
+        for i = 1:length(cur_images)
+            cur_image = imread(fullfile(cur_path, cur_images(i).name));
+            cur_image = single(cur_image);
+            if(size(cur_image,3) > 1)
+                fprintf('color image found %s\n', fullfile(cur_path, cur_images(i).name));
+                cur_image = rgb2gray(cur_image);
+            end
+            cur_image = imresize(cur_image, image_size);
+                       
+            % Stack images into a large 224 x 224 x 1 x total_images matrix
+            % images.data
+            imdb.images.data(:,:,1,image_counter) = cur_image;            
+            imdb.images.labels(  1,image_counter) = category;
+            imdb.images.set(     1,image_counter) = set; %1 for train, 2 for test (val?)
+            
+            image_counter = image_counter + 1;
+        end
+    end
+end
+</code></pre>
+
+<p> We also fine-tune the convolutional network by making following changes: </p>
+
+<pre><code>
+net.layers{21} = struct('type','dropout',...
+                            'rate',0.5);
+
+net.layers{20} = net.layers{19};
+
+net.layers{19} = net.layers{18};
+                       
+net.layers{18} = struct('type','dropout',...
+                            'rate',0.5);                     
+net.layers{22} = struct('type', 'conv', ... 
+                           'weights', {{f*randn(1,1,4096,15, 'single'), zeros(1, 15, 'single')}}, ...
+                           'stride', 1, ...
+                           'pad', 0, ...
+                           'name', 'fc8') ;
+
+net.layers{23} = struct('type', 'softmaxloss') ;
+
+vl_simplenn_display(net, 'inputSize', [224 224 3 50])
+</code></pre>
+
+<h3>Results in a table</h3>
+
+<table border=1>
+
+<tr>
+<td>
+<img src="figure2.png">
+<p>Objective and Training error plots for part 2</p>
+<p>The accuracy achieved is about 87.8%</p>
+</td>
+</tr>
+
+<tr>
+<td>
+<img src="filters2.png">
+<p>Filters for part 2</p>
+</td>
+</tr>
+
+</table>
+
 </body>
 </html>
